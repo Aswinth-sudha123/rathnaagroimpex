@@ -28,11 +28,14 @@
     if (window.innerWidth > 960) setMenu(false);
   });
 
-  // Mark the clicked link as active and close the mobile menu
+  // Close the mobile menu on click. Only same-page (#hash) links change the highlight;
+  // links to other pages keep the highlight set by that page's own HTML.
   links.forEach(function (link) {
     link.addEventListener('click', function () {
-      links.forEach(function (l) { l.classList.remove('active'); });
-      link.classList.add('active');
+      if (link.getAttribute('href').charAt(0) === '#') {
+        links.forEach(function (l) { l.classList.remove('active'); });
+        link.classList.add('active');
+      }
       setMenu(false);
     });
   });
@@ -97,15 +100,25 @@
 })();
 
 // Header: highlight the nav link of the section currently on screen
+// (only for sections that have a matching #hash link in the navbar, e.g. on the home page)
 (function () {
-  var sections = document.querySelectorAll('main section[id]');
-  var links = document.querySelectorAll('#siteNav a');
+  var hashLinks = Array.prototype.filter.call(
+    document.querySelectorAll('#siteNav a'),
+    function (a) { return a.getAttribute('href').charAt(0) === '#'; }
+  );
+  var sections = Array.prototype.filter.call(
+    document.querySelectorAll('main section[id]'),
+    function (s) {
+      return hashLinks.some(function (a) { return a.getAttribute('href') === '#' + s.id; });
+    }
+  );
+  // No matching sections (e.g. product page): leave the page's own active link alone
   if (!sections.length || !('IntersectionObserver' in window)) return;
 
   var spy = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (!entry.isIntersecting) return;
-      links.forEach(function (link) {
+      hashLinks.forEach(function (link) {
         link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
       });
     });
@@ -250,7 +263,41 @@
   });
 })();
 
-
 if (window.location.pathname === "/index.html") {
 window.location.replace("/");
 }
+// About page: types out the business keyword, pauses, erases, repeats
+(function () {
+  var el = document.getElementById('typedKeyword');
+  if (!el) return;
+
+  var phrases = [
+    'Best Agricultural Products Exported from India',
+    'Premium Garlic, Onion, Chillies & Turmeric',
+    'Trusted by Importers Worldwide'
+  ];
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = phrases[0];
+    return;
+  }
+
+  var p = 0, i = 0, deleting = false;
+
+  function tick() {
+    var text = phrases[p];
+    el.textContent = text.slice(0, i);
+
+    if (!deleting && i === text.length) {
+      deleting = true;
+      return setTimeout(tick, 2000);      // pause when fully typed
+    }
+    if (deleting && i === 0) {
+      deleting = false;
+      p = (p + 1) % phrases.length;
+    }
+    i += deleting ? -1 : 1;
+    setTimeout(tick, deleting ? 30 : 60);
+  }
+  tick();
+})();
