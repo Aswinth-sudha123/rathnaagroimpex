@@ -4,7 +4,17 @@
 
   <url>
        <loc>https://rathnaagroimpex.store/</loc>
-       <lastmod>2026-10-02T05:26:56+00:00</lastmod>
+       <lastmod>2026-10-07T05:51:28+00:00</lastmod>
        <priority>1.0000</priority>
+  </url>
+  <url>
+       <loc>https://rathnaagroimpex.store/about.html</loc>
+       <lastmod>2026-10-07T05:51:28+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://rathnaagroimpex.store/product.html</loc>
+       <lastmod>2026-10-07T05:51:28+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
 </urlset>
