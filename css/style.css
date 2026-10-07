@@ -1914,3 +1914,376 @@ a { color: inherit; text-decoration: none; }
     height: 22px;
   }
 }
+/* About page hero: its own background image */
+.hero.about-hero::before {
+  background: url("../images/about.webp") center / cover no-repeat;
+  opacity: .65;            /* raise for a stronger image, lower for a softer one */
+  -webkit-mask-image: none;
+          mask-image: none;
+}
+
+/* dark overlay so the centered text stays readable on the photo */
+.hero.about-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(255, 255, 255, .35);
+  pointer-events: none;
+}
+/* ---------- About page: keyword effects ---------- */
+.keyword-type {
+  min-height: 2.6em;               /* stops the page jumping while typing */
+  color: var(--green-dark);
+}
+.type-cursor {
+  display: inline-block;
+  width: 3px;
+  height: 1em;
+  margin-left: 4px;
+  vertical-align: -0.1em;
+  background: var(--brown);
+  animation: blink 0.9s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* hero text fades up on load */
+.about-hero .hero-copy h1,
+.about-hero .hero-copy p {
+  animation: riseIn .8s ease both;
+}
+.about-hero .hero-copy p { animation-delay: .25s; }
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .type-cursor,
+  .about-hero .hero-copy h1,
+  .about-hero .hero-copy p { animation: none; }
+}
+/* ================= Product / Menu page: animation + mobile fixes ================= */
+/* Paste at the very bottom of css/style.css */
+
+/* Hero photo (moved here from the inline style) with slow zoom */
+#menu-hero { overflow: hidden; }
+#menu-hero::before {
+  background: url("../images/menubg.jpg") center / cover no-repeat;
+  opacity: 1;
+  -webkit-mask-image: none;
+          mask-image: none;
+  animation: pgZoom 18s ease-in-out infinite alternate;
+}
+#menu-hero::after {                       /* white veil keeps text readable */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(255, 255, 255, .85);
+  pointer-events: none;
+}
+@keyframes pgZoom { from { transform: scale(1); } to { transform: scale(1.08); } }
+
+/* Hero text: centered + staggered fade-up */
+#menu-hero .hero-copy h1,
+#menu-hero .hero-copy h2 { margin-inline: auto; }
+#menu-hero .hero-copy h1,
+#menu-hero .hero-copy h2,
+#menu-hero .hero-copy p {
+  animation: pgRise .9s cubic-bezier(.2, .7, .2, 1) both;
+}
+#menu-hero .hero-copy h2 { animation-delay: .2s; }
+#menu-hero .hero-copy p  { animation-delay: .4s; }
+@keyframes pgRise {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Section headings: centered underline draws in */
+#catalog .products-head h2,
+#hsn-codes .export-head h2,
+#export-process h2 {
+  text-align: center;
+  max-width: none;
+  margin-inline: auto;
+}
+#catalog .products-head h2::after,
+#hsn-codes .export-head h2::after,
+#export-process h2::after {
+  content: "";
+  display: block;
+  width: 70px;
+  height: 3px;
+  margin: .6rem auto 0;
+  border-radius: 2px;
+  background: var(--brown);
+  animation: pgLine 1s .3s ease both;
+}
+@keyframes pgLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Product cards: image zoom, button sweep */
+#catalog .product-card img { transition: transform .6s ease; }
+#catalog .product-card .btn { position: relative; overflow: hidden; }
+#catalog .product-card .btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .5), transparent);
+  transform: skewX(-20deg);
+}
+
+/* Hover effects only on devices that really hover (not phones) */
+@media (hover: hover) {
+  #catalog .product-card:hover img { transform: scale(1.08); }
+  #catalog .product-card .btn:hover::after { left: 130%; transition: left .7s ease; }
+  #catalog .product-card:hover,
+  #export-process .why-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 28px rgba(47, 106, 43, .15);
+  }
+  #hsn-codes tbody tr { transition: background-color .25s ease; }
+  #hsn-codes tbody tr:hover { background-color: #f1f7ef; }
+}
+/* hover reacts instantly (the scroll-reveal sets a delay) */
+.product-card.in:hover,
+.why-item.in:hover { transition-delay: 0s !important; }
+
+/* ---------- Mobile ---------- */
+@media (max-width: 768px) {
+  #menu-hero { padding: 3rem 0 2.25rem !important; }
+  #catalog { padding-bottom: 3rem; }
+  #hsn-codes { padding: 2rem 0 3rem !important; }
+  #export-process { padding-block: 3rem; }
+}
+@media (max-width: 600px) {
+  #menu-hero { padding: 2.5rem 0 2rem !important; }
+  #menu-hero .hero-copy p { font-size: 1rem; }
+  #catalog .products-list { grid-template-columns: 1fr !important; }  /* one card per row */
+  #catalog .product-card .btn { padding-block: .85rem; }               /* easier to tap */
+  #hsn-codes th,
+  #hsn-codes td { padding: .75rem 1rem !important; font-size: .92rem; }
+  #export-process .why-list { grid-template-columns: 1fr; }
+}
+
+/* Respect "reduce motion" */
+@media (prefers-reduced-motion: reduce) {
+  #menu-hero::before,
+  #menu-hero .hero-copy h1,
+  #menu-hero .hero-copy h2,
+  #menu-hero .hero-copy p,
+  #catalog .products-head h2::after,
+  #hsn-codes .export-head h2::after,
+  #export-process h2::after { animation: none; }
+  #catalog .product-card img,
+  #catalog .product-card:hover img { transition: none; transform: none; }
+}
+/* ===== Product / Menu hero: extra animated effects =====
+   Paste at the very bottom of css/style.css (after product-animations.css) */
+
+/* keep the hero content centered on the screen */
+#menu-hero { justify-content: center; }
+#menu-hero > .container { position: relative; z-index: 1; }
+
+/* 1. Floating soft circles drifting behind the text */
+.hero-orbs { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.hero-orbs span {
+  position: absolute;
+  border-radius: 50%;
+  animation: pgFloat 9s ease-in-out infinite alternate;
+}
+.hero-orbs span:nth-child(1) {
+  width: 260px; height: 260px; top: 8%; left: 6%;
+  background: radial-gradient(circle, rgba(70, 145, 65, .30), transparent 70%);
+}
+.hero-orbs span:nth-child(2) {
+  width: 320px; height: 320px; bottom: 4%; right: 5%;
+  background: radial-gradient(circle, rgba(120, 80, 60, .24), transparent 70%);
+  animation-duration: 11s; animation-delay: -3s;
+}
+.hero-orbs span:nth-child(3) {
+  width: 160px; height: 160px; top: 18%; right: 22%;
+  background: radial-gradient(circle, rgba(70, 145, 65, .22), transparent 70%);
+  animation-duration: 8s; animation-delay: -5s;
+}
+@keyframes pgFloat {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(28px, -34px) scale(1.15); }
+}
+
+/* 2. Heading: fade-up, then a soft light shine moves across the green text */
+#menu-hero .hero-copy h1 {
+  background: linear-gradient(100deg, var(--green-dark) 0%, var(--green) 40%, #7bc46f 50%, var(--green) 60%, var(--green-dark) 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: pgRise .9s cubic-bezier(.2, .7, .2, 1) both,
+             pgShine 6s linear 1.2s infinite;
+}
+@keyframes pgShine {
+  from { background-position: 100% 0; }
+  to   { background-position: -100% 0; }
+}
+
+/* 3. Buttons fade up last, with a gentle pulse on the main one */
+#menu-hero .cta-row {
+  margin-top: 1.75rem;
+  animation: pgRise .9s .65s cubic-bezier(.2, .7, .2, 1) both;
+}
+#menu-hero .btn-primary { animation: pgPulse 2.8s ease-in-out 2s infinite; }
+@keyframes pgPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(120, 80, 60, .35); }
+  50%      { box-shadow: 0 0 0 12px rgba(120, 80, 60, 0); }
+}
+
+/* Mobile: smaller, calmer circles */
+@media (max-width: 600px) {
+  .hero-orbs span:nth-child(1) { width: 170px; height: 170px; }
+  .hero-orbs span:nth-child(2) { width: 200px; height: 200px; }
+  .hero-orbs span:nth-child(3) { display: none; }
+  #menu-hero .cta-row { flex-direction: column; align-items: stretch; }
+  #menu-hero .cta-row .btn { text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-orbs span,
+  #menu-hero .hero-copy h1,
+  #menu-hero .cta-row,
+  #menu-hero .btn-primary { animation: none; }
+}
+/* ===== Product / Menu hero: photo-based animation (works with your background image) =====
+   Paste at the very bottom of css/style.css, AFTER all other product CSS.
+   You can delete the earlier "route" / "floating circles" hero CSS. */
+
+#menu-hero {
+  --hero-img: url("../images/product.webp");   /* <-- change to your background image file */
+  overflow: hidden;
+  justify-content: center;
+  background-color: var(--green-dark);       /* shows if the image is missing */
+}
+#menu-hero > .container { position: relative; z-index: 1; }
+
+/* 1. Photo: slow zoom + drift (Ken Burns) */
+#menu-hero::before {
+  inset: -6%;
+  background: var(--hero-img) center / cover no-repeat;
+  opacity: 1;
+  -webkit-mask-image: none;
+          mask-image: none;
+  will-change: transform;
+  animation: heroKB 22s ease-in-out infinite alternate;
+}
+@keyframes heroKB {
+  from { transform: scale(1)    translate(0, 0); }
+  to   { transform: scale(1.14) translate(-2%, -1.5%); }
+}
+
+/* 2. Dark green overlay with a slow light sheen sweeping across */
+#menu-hero::after {
+  background:
+    linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .13) 50%, transparent 58%),
+    linear-gradient(rgba(20, 55, 25, .62), rgba(20, 55, 25, .62));
+  background-size: 250% 100%, 100% 100%;
+  animation: heroSheen 8s linear infinite;
+}
+@keyframes heroSheen {
+  from { background-position: 150% 0, 0 0; }
+  to   { background-position: -50% 0, 0 0; }
+}
+
+/* 3. Text colours for a photo background */
+#menu-hero .hero-copy h1 {
+  background: none;
+  -webkit-text-fill-color: #fff;
+  color: #fff;
+  animation: none;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, .35);
+}
+#menu-hero .hero-copy h2 { color: #f3e3d3; animation: heroUp .9s .75s cubic-bezier(.2, .7, .2, 1) both; }
+#menu-hero .hero-copy p  { color: #fff;     animation: heroUp .9s .95s cubic-bezier(.2, .7, .2, 1) both; }
+
+/* 4. Heading: words slide up one by one */
+.hero-words .w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: .14em;
+  margin-bottom: -.14em;
+}
+.hero-words .w > span {
+  display: inline-block;
+  transform: translateY(110%);
+  animation: wordUp .85s cubic-bezier(.2, .7, .2, 1) forwards;
+  animation-delay: calc(var(--i) * .13s + .2s);
+}
+@keyframes wordUp { to { transform: none; } }
+@keyframes heroUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* 5. Buttons on a photo */
+#menu-hero .cta-row { animation: heroUp .9s 1.15s cubic-bezier(.2, .7, .2, 1) both; }
+#menu-hero .btn-outline {
+  color: #fff;
+  border-color: #fff;
+  background: transparent;
+  transition: background-color .25s ease, color .25s ease;
+}
+#menu-hero .btn-outline:hover { background: #fff; color: var(--green-dark); }
+
+/* 6. Bouncing "scroll down" cue */
+.hero-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 1.25rem;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  margin-left: -20px;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  animation: heroUp .8s 1.6s ease forwards;
+}
+.hero-scroll span {
+  width: 14px;
+  height: 14px;
+  border-right: 3px solid #fff;
+  border-bottom: 3px solid #fff;
+  transform: rotate(45deg);
+  animation: cueBounce 1.6s ease-in-out 2.4s infinite;
+}
+@keyframes cueBounce {
+  0%, 100% { transform: translateY(0)   rotate(45deg); }
+  50%      { transform: translateY(9px) rotate(45deg); }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 768px) {
+  #menu-hero::before { inset: -10%; }        /* a little extra so the drift never shows edges */
+}
+@media (max-width: 600px) {
+  #menu-hero .hero-copy h2 { font-size: 1.1rem; }
+  #menu-hero .cta-row { flex-direction: column; align-items: stretch; }
+  #menu-hero .cta-row .btn { text-align: center; }
+  .hero-scroll { bottom: .75rem; }
+}
+@media (max-height: 520px) { .hero-scroll { display: none; } }   /* phones held sideways */
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  #menu-hero::before,
+  #menu-hero::after,
+  #menu-hero .hero-copy h2,
+  #menu-hero .hero-copy p,
+  #menu-hero .cta-row,
+  .hero-scroll span { animation: none; }
+  .hero-words .w > span { animation: none; transform: none; }
+  .hero-scroll { animation: none; opacity: 1; }
+}
